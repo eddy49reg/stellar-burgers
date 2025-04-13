@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "../../services/store";
 import { fetchUserOrders, removeUserOrders, selectUserOrders } from "../../slices/orderSlice";
 import { Preloader } from "@ui";
 import { ProfileOrdersUI } from "@ui-pages";
-import { fetchIngredients } from "../../slices/constructorSlice";
 
 export const ProfileOrders: FC = () => {
     const dispatch = useDispatch();
@@ -11,8 +10,8 @@ export const ProfileOrders: FC = () => {
 
     useEffect(() => {
         dispatch(removeUserOrders());
-        Promise.all([dispatch(fetchIngredients()), dispatch(fetchUserOrders())]);
-    }, []);
+        dispatch(fetchUserOrders());
+    }, [dispatch]);
 
     if (!orders) {
         return <Preloader />;

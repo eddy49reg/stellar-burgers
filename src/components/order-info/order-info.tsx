@@ -2,26 +2,27 @@ import { FC, useMemo } from "react";
 import { OrderInfoUI, Preloader } from "@ui";
 import { TIngredient } from "@utils-types";
 import { useSelector } from "../../services/store";
-import { redirect, useParams } from "react-router-dom";
+import { Navigate, useParams, useLocation } from "react-router-dom";
 import { selectOrders } from "../../slices/feedSlice";
 import { selectIngredients } from "../../slices/constructorSlice";
 
 export const OrderInfo: FC = () => {
     const params = useParams<{ number: string }>();
-    if (!params.number) {
-        redirect("/feed");
-        return null;
-    }
-
+    const location = useLocation();
     const orders = useSelector(selectOrders);
+    const ingredients = useSelector(selectIngredients);
+
+    if (!params.number) {
+        const basePath = location.pathname.includes("/profile") ? "/profile/orders" : "/feed";
+        return <Navigate to={basePath} replace />;
+    }
 
     const orderData = orders.find((item) => item.number === parseInt(params.number!));
 
-    const ingredients: TIngredient[] = useSelector(selectIngredients);
-
-    /* Готовим данные для отображения */
     const orderInfo = useMemo(() => {
-        if (!orderData || !ingredients.length) return null;
+        if (!orderData || !ingredients.length) {
+            return null;
+        }
 
         const date = new Date(orderData.createdAt);
 
@@ -41,7 +42,6 @@ export const OrderInfo: FC = () => {
             } else {
                 acc[item].count++;
             }
-
             return acc;
         }, {});
 

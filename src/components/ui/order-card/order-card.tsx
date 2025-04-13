@@ -16,13 +16,11 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(({ orderInfo, maxIngredien
         dispatch(openModal());
     };
 
+    const basePath = locationState.background.pathname;
+    const toPath = `${basePath}/${orderInfo.number}`;
+
     return (
-        <Link
-            to={orderInfo.number.toString()}
-            relative="path"
-            state={locationState}
-            className={`p-6 mb-4 mr-2 ${styles.order}`}
-            onClick={onModalHandler}>
+        <Link to={toPath} state={locationState} className={`p-6 mb-4 mr-2 ${styles.order}`} onClick={onModalHandler}>
             <div className={styles.order_info}>
                 <span className={`text text_type_digits-default ${styles.number}`}>#{String(orderInfo.number).padStart(6, "0")}</span>
                 <span className="text text_type_main-default text_color_inactive">
@@ -30,7 +28,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(({ orderInfo, maxIngredien
                 </span>
             </div>
             <h4 className={`pt-6 text text_type_main-medium ${styles.order_name}`}>{orderInfo.name}</h4>
-            {location.pathname === "/profile/orders" && <OrderStatus status={orderInfo.status} />}
+            {basePath.includes("/profile/orders") && <OrderStatus status={orderInfo.status} />}
             <div className={`pt-6 ${styles.order_content}`}>
                 <ul className={styles.ingredients}>
                     {orderInfo.ingredientsToShow.map((ingredient, index) => {

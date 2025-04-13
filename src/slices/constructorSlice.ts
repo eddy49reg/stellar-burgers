@@ -28,18 +28,20 @@ const initialState: TInitialState = {
     errorText: "",
 };
 
+export const addIngredientWithUniqueId = (ingredient: TIngredient) => {
+    const payload = ingredient.type === "bun" ? ingredient : { ...ingredient, uniqueId: uuidv4() };
+    return addIngredient(payload);
+};
+
 const constructorSlice = createSlice({
     name: "contructor",
     initialState,
     reducers: {
-        addIngredient(state, action: PayloadAction<TIngredient>) {
+        addIngredient(state, action: PayloadAction<TIngredient | TIngredientUnique>) {
             if (action.payload.type === "bun") {
                 state.constructorItems.bun = action.payload;
             } else {
-                state.constructorItems.ingredients.push({
-                    ...action.payload,
-                    uniqueId: uuidv4(),
-                });
+                state.constructorItems.ingredients.push(action.payload as TIngredientUnique);
             }
         },
         closeOrderRequest(state) {
