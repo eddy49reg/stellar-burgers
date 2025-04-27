@@ -1,7 +1,6 @@
 import { FC, SyntheticEvent, useEffect } from "react";
 import { LoginUI } from "@ui-pages";
-import { useDispatch } from "../../services/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "../../services/store";
 import { fetchLoginUser, removeErrorText, selectErrorText, selectLoading } from "../../slices/userSlice";
 import { Preloader } from "@ui";
 import { useForm } from "../../hooks/useForm";

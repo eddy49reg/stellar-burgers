@@ -4,7 +4,7 @@ import { BurgerConstructorUI } from "@ui";
 import { useDispatch, useSelector } from "../../services/store";
 import { useNavigate } from "react-router-dom";
 import {
-    closeOrderRequest,
+    clearOrderModalData,
     fetchNewOrder,
     selectConstructorItems,
     selectOrderModalData,
@@ -30,8 +30,9 @@ export const BurgerConstructor: FC = () => {
             dispatch(fetchNewOrder([constructorItems.bun._id, ...ingredientsIds, constructorItems.bun._id]));
         }
     };
+
     const closeOrderModal = () => {
-        dispatch(closeOrderRequest());
+        dispatch(clearOrderModalData()); // Используем новое действие
     };
 
     const price = useMemo(

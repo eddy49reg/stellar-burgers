@@ -18,12 +18,27 @@ const App = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const backgroundLocation = location.state?.background;
     const isModalOpened = useSelector(selectIsModalOpened);
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const ingredients = useSelector(selectIngredients);
     const feed = useSelector(selectOrders);
-    const derivedNumber = location.pathname.match(/^\/(feed|profile\/orders)\/(\d+)$/)?.[2];
+    const derivedNumber =
+        location.pathname.match(/^\/(feed|profile\/orders)\/(\d+)$/) || location.pathname.match(/^\/ingredients\/([a-fA-F0-9]+)$/);
+
+    const getBackgroundLocation = () => {
+        if (location.pathname.startsWith("/feed/") && location.pathname.match(/^\/feed\/(\d+)$/)) {
+            return { ...location, pathname: "/feed", state: null };
+        }
+        if (location.pathname.startsWith("/profile/orders/") && location.pathname.match(/^\/profile\/orders\/(\d+)$/)) {
+            return { ...location, pathname: "/profile/orders", state: null };
+        }
+        if (location.pathname.startsWith("/ingredients/")) {
+            return { ...location, pathname: "/", state: null };
+        }
+        return location.state?.background || location;
+    };
+
+    const backgroundLocation = getBackgroundLocation();
 
     useEffect(() => {
         if (!isAuthenticated && token) {
@@ -47,8 +62,12 @@ const App = () => {
 
     const handleCloseModal = () => {
         dispatch(closeModal());
-        const basePath = location.pathname.includes("/profile") ? "/profile/orders" : "/feed";
-        navigate(basePath, { replace: true });
+        if (location.pathname.startsWith("/ingredients")) {
+            navigate("/", { replace: true });
+        } else {
+            const basePath = location.pathname.includes("/profile") ? "/profile/orders" : "/feed";
+            navigate(basePath, { replace: true });
+        }
     };
 
     return (

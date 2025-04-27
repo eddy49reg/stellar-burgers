@@ -1,23 +1,52 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { OrderInfoUI, Preloader } from "@ui";
 import { TIngredient } from "@utils-types";
-import { useSelector } from "../../services/store";
+import { useDispatch, useSelector } from "../../services/store";
 import { Navigate, useParams, useLocation } from "react-router-dom";
 import { selectOrders } from "../../slices/feedSlice";
-import { selectIngredients } from "../../slices/constructorSlice";
+import {
+    fetchOldOrder,
+    selectIngredients,
+    selectOldOrderError,
+    selectOldOrderLoading,
+    selectOrderModalData,
+    clearOrderModalData,
+} from "../../slices/constructorSlice";
 
 export const OrderInfo: FC = () => {
     const params = useParams<{ number: string }>();
     const location = useLocation();
+    const dispatch = useDispatch();
+
     const orders = useSelector(selectOrders);
     const ingredients = useSelector(selectIngredients);
+    const orderModalData = useSelector(selectOrderModalData);
+    const oldOrderLoading = useSelector(selectOldOrderLoading);
+    const oldOrderError = useSelector(selectOldOrderError);
 
-    if (!params.number) {
+    const orderNumber = params.number ? parseInt(params.number) : null;
+
+    if (!orderNumber) {
         const basePath = location.pathname.includes("/profile") ? "/profile/orders" : "/feed";
         return <Navigate to={basePath} replace />;
     }
 
-    const orderData = orders.find((item) => item.number === parseInt(params.number!));
+    const orderFromFeed = orders.find((item) => item.number === orderNumber);
+
+    useEffect(() => {
+        if (!orderFromFeed && !orderModalData && !oldOrderLoading && !oldOrderError) {
+            dispatch(fetchOldOrder(orderNumber));
+        }
+    }, [dispatch, orderFromFeed, orderModalData, oldOrderLoading, oldOrderError, orderNumber]);
+
+    useEffect(
+        () => () => {
+            dispatch(clearOrderModalData());
+        },
+        [dispatch],
+    );
+
+    const orderData = orderFromFeed || orderModalData;
 
     const orderInfo = useMemo(() => {
         if (!orderData || !ingredients.length) {

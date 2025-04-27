@@ -1,4 +1,4 @@
-import { getIngredientsApi, orderBurgerApi } from "@api";
+import { getIngredientsApi, getOrderByNumberApi, orderBurgerApi } from "@api";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TConstructorItems, TIngredient, TIngredientUnique, TOrder } from "@utils-types";
 import { v4 as uuidv4 } from "uuid";
@@ -11,6 +11,8 @@ type TInitialState = {
     orderRequest: boolean;
     isModalOpened: boolean;
     errorText: string;
+    oldOrderLoading: boolean;
+    oldOrderError: string | null;
 };
 
 const initialState: TInitialState = {
@@ -26,12 +28,21 @@ const initialState: TInitialState = {
     orderRequest: false,
     isModalOpened: false,
     errorText: "",
+    oldOrderLoading: false,
+    oldOrderError: null,
 };
 
 export const addIngredientWithUniqueId = (ingredient: TIngredient) => {
     const payload = ingredient.type === "bun" ? ingredient : { ...ingredient, uniqueId: uuidv4() };
     return addIngredient(payload);
 };
+
+export const fetchIngredients = createAsyncThunk("ingredients/getAll", async () => await getIngredientsApi());
+export const fetchNewOrder = createAsyncThunk("orders/newOrder", async (data: string[]) => await orderBurgerApi(data));
+export const fetchOldOrder = createAsyncThunk(
+    "orders/fetchOldOrder",
+    async (orderNumber: number) => await getOrderByNumberApi(orderNumber),
+);
 
 const constructorSlice = createSlice({
     name: "contructor",
@@ -53,6 +64,11 @@ const constructorSlice = createSlice({
                 },
                 ingredients: [],
             };
+        },
+        clearOrderModalData(state) {
+            state.orderRequest = false;
+            state.orderModalData = null;
+            state.oldOrderError = null;
         },
         openModal(state) {
             state.isModalOpened = true;
@@ -89,6 +105,8 @@ const constructorSlice = createSlice({
         selectOrderRequest: (state) => state.orderRequest,
         selectIsModalOpened: (state) => state.isModalOpened,
         selectErrorText: (state) => state.errorText,
+        selectOldOrderLoading: (state) => state.oldOrderLoading,
+        selectOldOrderError: (state) => state.oldOrderError,
     },
     extraReducers: (builder) => {
         builder
@@ -108,12 +126,21 @@ const constructorSlice = createSlice({
             .addCase(fetchNewOrder.fulfilled, (state, action) => {
                 state.orderModalData = action.payload.order;
                 state.orderRequest = false;
+            })
+            .addCase(fetchOldOrder.pending, (state) => {
+                state.oldOrderLoading = true;
+                state.oldOrderError = null;
+            })
+            .addCase(fetchOldOrder.fulfilled, (state, action) => {
+                state.oldOrderLoading = false;
+                state.orderModalData = action.payload.orders[0];
+            })
+            .addCase(fetchOldOrder.rejected, (state, action) => {
+                state.oldOrderLoading = false;
+                state.oldOrderError = action.error.message || "Failed to fetch order";
             });
     },
 });
-
-export const fetchIngredients = createAsyncThunk("ingredients/getAll", async () => await getIngredientsApi());
-export const fetchNewOrder = createAsyncThunk("orders/newOrder", async (data: string[]) => await orderBurgerApi(data));
 
 export const {
     selectLoading,
@@ -123,11 +150,14 @@ export const {
     selectOrderRequest,
     selectIsModalOpened,
     selectErrorText,
+    selectOldOrderLoading,
+    selectOldOrderError,
 } = constructorSlice.selectors;
 
 export const {
     addIngredient,
     closeOrderRequest,
+    clearOrderModalData,
     openModal,
     closeModal,
     deleteIngredient,
