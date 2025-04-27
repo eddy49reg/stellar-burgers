@@ -72,9 +72,11 @@ const constructorSlice = createSlice({
         },
         openModal(state) {
             state.isModalOpened = true;
+            sessionStorage.setItem("isModalOpened", "true");
         },
         closeModal(state) {
             state.isModalOpened = false;
+            sessionStorage.setItem("isModalOpened", "false");
         },
         deleteIngredient(state, action: PayloadAction<TIngredientUnique>) {
             const ingredientIndex = state.constructorItems.ingredients.findIndex((item) => item.uniqueId === action.payload.uniqueId);

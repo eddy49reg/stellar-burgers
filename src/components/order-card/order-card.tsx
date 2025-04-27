@@ -1,6 +1,5 @@
 import { FC, memo, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-
 import { OrderCardProps } from "./type";
 import { TIngredient } from "@utils-types";
 import { useSelector } from "../../services/store";
@@ -42,5 +41,10 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
     if (!orderInfo) return null;
 
     const basePath = location.pathname.includes("/profile") ? "/profile/orders" : "/feed";
-    return <OrderCardUI orderInfo={orderInfo} maxIngredients={maxIngredients} locationState={{ background: { pathname: basePath } }} />;
+    const locationState = {
+        background: { pathname: basePath },
+        modal: true,
+    };
+
+    return <OrderCardUI orderInfo={orderInfo} maxIngredients={maxIngredients} locationState={locationState} />;
 });

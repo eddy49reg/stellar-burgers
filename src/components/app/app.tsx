@@ -22,18 +22,19 @@ const App = () => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const ingredients = useSelector(selectIngredients);
     const feed = useSelector(selectOrders);
-    const derivedNumber =
-        location.pathname.match(/^\/(feed|profile\/orders)\/(\d+)$/) || location.pathname.match(/^\/ingredients\/([a-fA-F0-9]+)$/);
 
+    const isModalView = location.state?.modal === true;
     const getBackgroundLocation = () => {
-        if (location.pathname.startsWith("/feed/") && location.pathname.match(/^\/feed\/(\d+)$/)) {
-            return { ...location, pathname: "/feed", state: null };
-        }
-        if (location.pathname.startsWith("/profile/orders/") && location.pathname.match(/^\/profile\/orders\/(\d+)$/)) {
-            return { ...location, pathname: "/profile/orders", state: null };
-        }
-        if (location.pathname.startsWith("/ingredients/")) {
-            return { ...location, pathname: "/", state: null };
+        if (location.state?.modal === true) {
+            if (location.pathname.startsWith("/feed/") && location.pathname.match(/^\/feed\/(\d+)$/)) {
+                return { ...location, pathname: "/feed", state: null };
+            }
+            if (location.pathname.startsWith("/profile/orders/") && location.pathname.match(/^\/profile\/orders\/(\d+)$/)) {
+                return { ...location, pathname: "/profile/orders", state: null };
+            }
+            if (location.pathname.startsWith("/ingredients/")) {
+                return { ...location, pathname: "/", state: null };
+            }
         }
         return location.state?.background || location;
     };
@@ -41,6 +42,11 @@ const App = () => {
     const backgroundLocation = getBackgroundLocation();
 
     useEffect(() => {
+        const savedModalState = sessionStorage.getItem("isModalOpened");
+        if (savedModalState === "true") {
+            dispatch(openModal());
+        }
+
         if (!isAuthenticated && token) {
             dispatch(getUserThunk()).then(() => dispatch(init()));
         } else {
@@ -53,12 +59,6 @@ const App = () => {
             dispatch(fetchFeed());
         }
     }, [dispatch, isAuthenticated, ingredients.length, feed.length]);
-
-    useEffect(() => {
-        if (derivedNumber && !isModalOpened) {
-            dispatch(openModal());
-        }
-    }, [derivedNumber, isModalOpened, location.pathname, dispatch]);
 
     const handleCloseModal = () => {
         dispatch(closeModal());
@@ -138,7 +138,7 @@ const App = () => {
                 />
             </Routes>
 
-            {(isModalOpened || derivedNumber) && (
+            {(isModalOpened || isModalView) && (
                 <Routes>
                     <Route
                         path="/ingredients/:id"
