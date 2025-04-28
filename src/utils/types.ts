@@ -18,7 +18,7 @@ export type TIngredient = {
 };
 
 export type TIngredientUnique = TIngredient & { uniqueId: string };
-export type TConstructorIngredient = TIngredient & {
+export type TConstructorIngredient = TIngredientUnique & {
     id: string;
 };
 
