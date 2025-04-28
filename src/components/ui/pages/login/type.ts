@@ -1,7 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
-import { PageUIProps } from '../common-type';
+import { PageUIProps } from "../common-type";
 
-export type LoginUIProps = PageUIProps & {
-  password: string;
-  setPassword: Dispatch<SetStateAction<string>>;
+export type LoginUIProps = Omit<PageUIProps, "setEmail"> & {
+    password: string;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };

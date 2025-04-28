@@ -1,67 +1,93 @@
 {
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["react", "@typescript-eslint", "prettier"],
-  "extends": ["prettier"],
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
+ "parser": "@typescript-eslint/parser",
+    "plugins": ["react", "@typescript-eslint", "prettier"],
+    "extends": ["prettier"],
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "rules": {
+        "@typescript-eslint/member-ordering": [
+            "warn",
+            {
+                "default": [
+                    "private-static-field",
+                    "protected-static-field",
+                    "public-static-field",
+                    "private-static-method",
+                    "protected-static-method",
+                    "public-static-method",
+                    "private-constructor",
+                    "protected-constructor",
+                    "public-constructor",
+                    "private-instance-field",
+                    "protected-instance-field",
+                    "public-instance-field",
+                    "private-instance-method",
+                    "protected-instance-method",
+                    "public-instance-method"
+                ]
+            }
+        ],
+        "array-bracket-newline": ["warn", {"multiline": true}],
+        "array-bracket-spacing": ["warn", "never"],
+        "arrow-body-style": ["warn", "as-needed"],
+        "block-spacing": ["warn", "always"],
+        "comma-dangle": [
+            "warn",
+            {
+                "arrays": "only-multiline",
+                "objects": "only-multiline",
+                "imports": "only-multiline",
+                "exports": "only-multiline",
+                "functions": "only-multiline"
+            }
+        ],
+        "dot-notation": "warn",
+        "eol-last": ["warn", "always"],
+        "eqeqeq": ["error", "always"],
+        "indent": ["warn", 4, { "SwitchCase": 1 }],
+        "jsx-quotes": ["warn", "prefer-double"],
+        "linebreak-style": ["error", "unix"],
+        "no-console": "error",
+        "no-extra-semi": "error",
+        "no-multi-spaces": ["warn"],
+        "no-tabs": ["warn"],
+        "no-trailing-spaces": ["error"],
+        "no-unused-expressions": ["warn", {"allowShortCircuit": true}],
+        "prettier/prettier": [
+            "warn",
+            {
+                "usePrettierrc": true
+            }
+        ],
+        "quotes": ["warn", "double", {"avoidEscape": true}],
+        "react/jsx-boolean-value": ["warn", "never"],
+        "react/jsx-key": "warn",
+        "react/jsx-max-depth": ["warn", {"max": 8}],
+        "react/jsx-max-props-per-line": ["warn", {"maximum": 7}],
+        "react/no-redundant-should-component-update": "warn",
+        "react/no-string-refs": "warn",
+        "react/no-this-in-sfc": "warn",
+        "react/no-unsafe": "warn",
+        "react/no-unused-state": "warn",
+        "react/no-will-update-set-state": "warn",
+        "react/prefer-stateless-function": "warn",
+        "react/react-in-jsx-scope": "off",
+        "react/self-closing-comp": "warn",
+        "react/void-dom-elements-no-children": "warn",
+        "require-await": "error",
+        "semi": ["warn", "always"],
+        "use-isnan": ["error", {"enforceForSwitchCase": true}],
+        "valid-typeof": "warn",
+        "yoda": ["error", "never"]
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
     }
-  },
-  "rules": {
-    "prettier/prettier": [
-      "warn",
-      {
-        "usePrettierrc": true
-      }
-    ],
-    "react/react-in-jsx-scope": "off",
-    "comma-dangle": "off",
-    "use-isnan": ["error", { "enforceForSwitchCase": true }],
-    "react/void-dom-elements-no-children": "warn",
-    "react/no-unsafe": "warn",
-    "react/no-unused-state": "warn",
-    "react/prefer-stateless-function": "warn",
-    "react/self-closing-comp": "warn",
-    "react/no-will-update-set-state": "warn",
-    "react/no-this-in-sfc": "warn",
-    "react/no-string-refs": "warn",
-    "react/no-redundant-should-component-update": "warn",
-    "react/jsx-boolean-value": ["warn", "never"],
-    "react/jsx-key": "warn",
-    "react/jsx-max-props-per-line": ["warn", { "maximum": 7 }],
-    "react/jsx-max-depth": ["warn", { "max": 8 }],
-    "arrow-body-style": ["warn", "as-needed"],
-    "dot-notation": "warn",
-    "jsx-quotes": ["warn", "prefer-single"],
-    "valid-typeof": "warn",
-    "@typescript-eslint/member-ordering": [
-      "warn",
-      {
-        "default": [
-          "private-static-field",
-          "protected-static-field",
-          "public-static-field",
-          "private-static-method",
-          "protected-static-method",
-          "public-static-method",
-          "private-constructor",
-          "protected-constructor",
-          "public-constructor",
-          "private-instance-field",
-          "protected-instance-field",
-          "public-instance-field",
-          "private-instance-method",
-          "protected-instance-method",
-          "public-instance-method"
-        ]
-      }
-    ]
-  },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  }
 }

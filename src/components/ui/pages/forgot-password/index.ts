@@ -1,1 +1,1 @@
-export { ForgotPasswordUI } from './forgot-password';
+export { ForgotPasswordUI } from "./forgot-password";
